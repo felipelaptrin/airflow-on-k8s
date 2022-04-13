@@ -9,7 +9,7 @@
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 4.8.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 4.9.0 |
 
 ## Modules
 
@@ -27,6 +27,7 @@ No modules.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_aws_region"></a> [aws\_region](#input\_aws\_region) | AWS region name | `string` | `"us-east-1"` | no |
+| <a name="input_log_bucket"></a> [log\_bucket](#input\_log\_bucket) | S3 Bucket that will store logs created by Airflow | `string` | n/a | yes |
 | <a name="input_password"></a> [password](#input\_password) | Root password of the RDS database instance | `string` | n/a | yes |
 | <a name="input_username"></a> [username](#input\_username) | Root username of the RDS database instance | `string` | n/a | yes |
 

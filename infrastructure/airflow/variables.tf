@@ -15,3 +15,8 @@ variable "aws_region" {
   type        = string
   default     = "us-east-1"
 }
+
+variable "log_bucket" {
+  description = "S3 Bucket that will store logs created by Airflow"
+  type        = string
+}
