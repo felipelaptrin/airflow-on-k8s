@@ -54,8 +54,6 @@ airflow:
 ###################################
 scheduler:
   replicas: 1
-  # logCleanup:
-  #   enabled: false
 
 ###################################
 ## COMPONENT | Airflow Webserver
@@ -63,46 +61,11 @@ scheduler:
 web:
   replicas: 1
 
-  service:
-    annotations: {}
-    sessionAffinity: "None"
-    sessionAffinityConfig: {}
-    type: ClusterIP
-    externalPort: 8080
-    loadBalancerIP: ""
-    loadBalancerSourceRanges: []
-    nodePort:
-      http: ""
-
-  # readinessProbe:
-  #   enabled: true
-  #   initialDelaySeconds: 60
-  #   periodSeconds: 60
-  #   timeoutSeconds: 60
-  #   failureThreshold: 6
-
-  # livenessProbe:
-  #   enabled: true
-  #   initialDelaySeconds: 60
-  #   periodSeconds: 60
-  #   timeoutSeconds: 60
-  #   failureThreshold: 6
-  
-  # resources:
-  #   requests:
-  #     memory: "2024Mi"
-  #     cpu: "1"
-  #   limits:
-  #     memory: "3048Mi"
-  #     cpu: "2"
-
 ###################################
 ## COMPONENT | Airflow Workers
 ###################################
 workers:
   enabled: false
-  # logCleanup:
-  #   enabled: false
 
 ###################################
 ## COMPONENT | Triggerer
