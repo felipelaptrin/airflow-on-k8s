@@ -4,5 +4,4 @@ make airflow:
 	@echo "Creating namespace for airflow deployment"
 	@kubectl apply -f ./kubernetes/airflow/namespace.yaml
 	@echo "Setting up Airflow into the K8S cluster"
-	@echo "Creating secrets..."
 	@bash ./scripts/airflow_deploy.sh
