@@ -1,0 +1,166 @@
+airflow:
+  image:
+    repository: apache/airflow
+    tag: 2.2.5-python3.9
+
+  executor: KubernetesExecutor
+
+  extraEnv:
+    - name: AIRFLOW__WEBSERVER__SECRET_KEY
+      valueFrom:
+        secretKeyRef:
+          name: airflow-webserver-secret-key
+          key: value
+    - name: AIRFLOW__CORE__FERNET_KEY
+      valueFrom:
+        secretKeyRef:
+          name: airflow-fernet-key
+          key: value
+
+  users:
+    - username: admin
+      password: admin
+      role: Admin
+      email: admin@example.com
+      firstName: admin
+      lastName: admin
+
+  connections:
+    - id: aws_default
+      type: aws
+      description: AWS IAM User associated with Airflow
+      extra: |-
+        { "aws_access_key_id": "${AWS_ACCESS_KEY_ID}",
+          "aws_secret_access_key": "${AWS_SECRET_ACCESS_KEY}",
+          "region_name":"us-east-1" }
+
+  connectionsTemplates: 
+    "AWS_ACCESS_KEY_ID":
+      kind: secret
+      name: aws-credentials
+      key: access-key
+    "AWS_SECRET_ACCESS_KEY":
+      kind: secret
+      name: aws-credentials
+      key: secret-key
+
+  config:
+    AIRFLOW__LOGGING__REMOTE_LOGGING: "True"
+    AIRFLOW__LOGGING__REMOTE_BASE_LOG_FOLDER: "s3://flat-data-platform-logs/airflow/"
+    AIRFLOW__LOGGING__REMOTE_LOG_CONN_ID: "aws_default"
+
+###################################
+## COMPONENT | Airflow Scheduler
+###################################
+scheduler:
+  replicas: 1
+  # logCleanup:
+  #   enabled: false
+
+###################################
+## COMPONENT | Airflow Webserver
+###################################
+web:
+  replicas: 1
+
+  service:
+    annotations: {}
+    sessionAffinity: "None"
+    sessionAffinityConfig: {}
+    type: ClusterIP
+    externalPort: 8080
+    loadBalancerIP: ""
+    loadBalancerSourceRanges: []
+    nodePort:
+      http: ""
+
+  # readinessProbe:
+  #   enabled: true
+  #   initialDelaySeconds: 60
+  #   periodSeconds: 60
+  #   timeoutSeconds: 60
+  #   failureThreshold: 6
+
+  # livenessProbe:
+  #   enabled: true
+  #   initialDelaySeconds: 60
+  #   periodSeconds: 60
+  #   timeoutSeconds: 60
+  #   failureThreshold: 6
+  
+  # resources:
+  #   requests:
+  #     memory: "2024Mi"
+  #     cpu: "1"
+  #   limits:
+  #     memory: "3048Mi"
+  #     cpu: "2"
+
+###################################
+## COMPONENT | Airflow Workers
+###################################
+workers:
+  enabled: false
+  # logCleanup:
+  #   enabled: false
+
+###################################
+## COMPONENT | Triggerer
+###################################
+triggerer:
+  enabled: true
+  replicas: 1
+
+###################################
+## COMPONENT | Flower
+###################################
+flower:
+  enabled: false
+
+###################################
+## CONFIG | Airflow DAGs
+###################################
+dags:
+  gitSync:
+    enabled: true
+    repo: "https://github.com/felipelaptrin/data-platform.git"
+    repoSubPath: "dags"
+    branch: main
+    syncWait: 30
+
+###################################
+## CONFIG | Kubernetes Ingress
+###################################
+ingress:
+  enabled: false
+
+###################################
+## DATABASE | PgBouncer
+###################################
+pgbouncer:
+  enabled: true
+
+###################################
+## DATABASE | Embedded Postgres
+###################################
+postgresql:
+  enabled: false
+
+###################################
+## DATABASE | External Database
+###################################
+externalDatabase:
+  type: postgres
+  host: dev-airflow.chzqzjskdqaq.us-east-1.rds.amazonaws.com
+  port: 5432
+  database: airflow_db
+  userSecret: postgres-database
+  userSecretKey: username
+  passwordSecret: postgres-database
+  passwordSecretKey: password
+
+###################################
+## DATABASE | Embedded Redis
+###################################
+redis:
+  enabled: false
